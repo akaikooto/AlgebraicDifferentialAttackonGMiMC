@@ -1,0 +1,90 @@
+//方法2，k=3
+load "division.txt";
+load "GMiMC.txt";
+pp:=[1031,2063,4127,8219,16421,32771,65537,131111,262151,524309,1048583,2097257];
+for kk:=1 to 1 do;
+T:=Realtime();
+
+t1:=0;//计算f1，f2的时间
+t2:=0;//计算GB的时间
+t3:=0;//给GB赋值的时间
+t4:=0;//分解GB的时间
+t5:=0;//加密所用的时间
+
+//p:=pp[2*kk-1];
+p:=2^61+20*2^32+1;
+F:=GF(p);
+alpha:=1;
+v:=3;
+S:=ZeroMatrix(F,1,v);
+S:=RemoveRow(S,1);
+P<z,y,x>:=PolynomialRing(F,v);
+f:=[y,y];
+
+T1:=Realtime();
+b:=[F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,x,y,z];
+b:=gmimc(b,1,12-v-1);
+con:=b[1];
+b:=gmimc(b,12-v,12);
+f[1]:=b[1]-con;
+for j:=1 to 12 do
+    b[j]:=division(b[j],f[1]);
+end for;
+
+b:=gmimc(b,13,24-v-1);
+con:=b[1];
+b:=gmimc(b,24-v,24);
+f[2]:=b[1]-con;
+t1:=t1+Realtime(T1);
+
+
+T2:=Realtime();
+G:=GroebnerBasis(ideal<P|f[1],f[2]>);
+t2:=t2+Realtime(T2);
+/*for k1:=0 to p-1 do
+    T3:=Realtime();
+    f1:=Evaluate(G[5],x,k1);
+    t3:=t3+Realtime(T3);
+    T4:=Realtime();
+    facf1:=Factorization(UnivariatePolynomial(f1));
+    n:=1;
+    while Degree(facf1[n,1]) eq 1 do 
+        sx:=k1;
+        sy:=-TrailingCoefficient(facf1[n,1]);
+        facf2:=Factorization(GCD(Evaluate(Evaluate(f[1],x,sx),y,sy),Evaluate(Evaluate(f[2],x,sx),y,sy)));
+        nn:=1;
+        while (nn le (#facf2)) and (Degree(facf2[nn,1]) eq 1) do
+            sz:=-TrailingCoefficient(facf2[nn,1]);
+            S:=VerticalJoin(S,Matrix(1,3,[sx,sy,sz]));
+            nn:=nn+1;
+        end while;
+        n:=n+1;
+    end while;
+    t4:=t4+Realtime(T4);
+end for;
+
+T5:=Realtime();
+ns:=Nrows(S);
+DS:=ZeroMatrix(F,ns,12);
+b1:=[F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!0,F!0,F!0];
+c:=0;
+for i := 1 to ns do 
+    for k := 1 to 3 do
+        b1[9+k]:=F!S[i,k];
+    end for;
+    v:=gmimc(b1,1,48);
+    for k:= 1 to 12 do
+        DS[i,k]:=v[k];
+    end for;
+end for;
+t5:=t5+Realtime(T5);
+*/
+
+
+t1;
+t2;
+t3;
+t4;
+t5;
+Realtime(T);
+end for;

@@ -1,0 +1,43 @@
+//直接求两个多项式的grobner基（不赋值）
+T:=Realtime();
+load "division.txt";
+load "GMiMC.txt";
+p:=257;
+F:=GF(p);
+alpha:=1;
+v:=3;
+SS:=ZeroMatrix(F,2*p,v);
+P<z,y,x>:=PolynomialRing(F,v);
+f:=[y,y];
+ns:=0;
+k1:=2;
+    b:=[F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,x,y,z];
+    b:=gmimc(b,1,12-v-1);
+    con:=b[1];
+    b:=gmimc(b,12-v,12);
+    f[1]:=b[1]-con;
+    for j:=1 to 12 do
+        b[j]:=division(b[j],f[1]);
+    end for;
+
+    b:=gmimc(b,13,24-v-1);
+    con:=b[1];
+    b:=gmimc(b,24-v,24);
+    f[2]:=b[1]-con;
+
+I:=ideal<P|f[1],f[2]>;
+G:=GroebnerBasis(I: Al:="Walk");
+
+for i:=1 to #G do
+    IsUnivariate(Evaluate(G[i],1,1));
+end for;
+
+for i:=1 to #G do
+    IsUnivariate(Evaluate(G[i],2,1));
+end for;
+
+for i:=1 to #G do
+    IsUnivariate(Evaluate(G[i],3,1));
+end for;
+
+Realtime(T);

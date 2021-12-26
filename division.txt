@@ -1,0 +1,12 @@
+division:=function(x,y)
+    z:=0;
+    while x ne 0 do
+        if IsDivisibleBy(LeadingTerm(x),LeadingTerm(y)) then
+            x:=x-(LeadingTerm(x) div LeadingTerm(y)) * y;
+        else
+            z:=z+LeadingTerm(x);
+            x:=Reductum(x);
+        end if;
+    end while;
+    return z;
+end function;

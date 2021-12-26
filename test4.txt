@@ -1,0 +1,41 @@
+//变量数：4，向前向后建立方程组
+load "division.txt";
+load "GMiMC.txt";
+load "GMiMC_inv.txt";
+p:=1031;
+F:=GF(p);
+P<x,y,z>:=PolynomialRing(F,3);
+f:=[x,x,x];
+coef:=501;
+
+b:=[F!0,F!0,F!0,F!0,F!0,F!0,F!0,F!0,F!coef,x,y,z];
+
+con:=b[1];
+bb:=gmimcinv(b,12,9);
+f[1]:=bb[5]-con;
+
+bf:=gmimc(b,13,20);
+con:=bf[1];
+bf:=gmimc(bf,21,24);
+f[2]:=bf[1]-con;
+for j:=1 to 12 do
+    bf[j]:=division(bf[j],f[2]);
+end for;
+
+
+bf:=gmimc(bf,25,32);
+con:=bf[1];
+bf:=gmimc(bf,33,36);
+f[3]:=bf[1]-con;
+for j:=1 to 12 do
+    bf[j]:=division(bf[j],f[3]);
+end for;
+
+
+
+Degree(f[1]);
+Length(f[1]);
+Degree(f[2]);
+Length(f[2]);
+Degree(f[3]);
+Length(f[3]);

@@ -1,0 +1,16 @@
+gmimcinv:=function(b,r2,r1)
+    i:=r2;
+    while i ge r1 do
+        for j:=1 to 11 do
+            b[j]:=b[j]-(b[12]+i)^3;
+        end for;
+        temp:=b[12];
+        for j:=1 to 11 do
+            b[13-j]:=b[12-j];
+        end for;
+        b[1]:=temp;
+        i:=i-1; 
+    end while;
+    v:=b;
+    return v;
+end function;

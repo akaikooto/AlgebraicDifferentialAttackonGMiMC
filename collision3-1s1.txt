@@ -1,0 +1,89 @@
+//s1 means set less variables
+
+load "division.txt";
+load "GMiMC.txt";
+pp:=[1031,2063,4127,8219,16421,32771,65537,131111,262151,524309,1048583,2097257];
+kk:=6;
+T:=Realtime();
+
+t1:=0;//计算f1，f2的时间
+t2:=0;//计算GB的时间
+t3:=0;//分解GB的时间
+t4:=0;//加密所用的时间
+
+
+p:=pp[2*kk-1];
+F:=GF(p);
+alpha:=1;
+v:=3;
+S:=ZeroMatrix(F,1,v);
+S:=RemoveRow(S,1);
+P<y,z>:=PolynomialRing(F,v-1);
+f:=[y,y];
+for k1:=0 to p-1 do
+    T1:=Realtime();
+    b:=[F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!k1,y,z];
+    b:=gmimc(b,1,12-v-1);
+    con:=b[1];
+    b:=gmimc(b,12-v,12);
+    f[1]:=b[1]-con;
+    for j:=1 to 12 do
+        b[j]:=division(b[j],f[1]);
+    end for;
+
+    b:=gmimc(b,13,24-v-1);
+    con:=b[1];
+    b:=gmimc(b,24-v,24);
+    f[2]:=b[1]-con;
+    t1:=t1+Realtime(T1);
+    
+
+
+
+    T2:=Realtime();
+    G:=GroebnerBasis(ideal<P|f[1],f[2]>);
+    t2:=t2+Realtime(T2);
+    T3:=Realtime();
+    if IsUnivariate(G[#G]) then
+           fz:=Factorization(G[#G]);
+           n:=1;
+           while Degree(fz[n,1]) eq 1 do
+                sx:=k1;
+                sz:=-TrailingCoefficient(fz[n,1]);
+                facofy:=Factorization(GCD(Evaluate(f[1],z,sz),Evaluate(f[2],z,sz)));
+                nn:=1;
+                while (nn le (#facofy)) and (Degree(facofy[nn,1]) eq 1) do
+                    sy:=-TrailingCoefficient(facofy[nn,1]);
+                    S:=VerticalJoin(S,Matrix(1,3,[sx,sy,sz]));
+                    nn:=nn+1;
+                end while;
+                n:=n+1;
+            end while;
+    end if;
+    t3:=t3+Realtime(T3);
+end for;
+
+
+
+T4:=Realtime();
+ns:=Nrows(S);
+DS:=ZeroMatrix(F,ns,12);
+b1:=[F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!0,F!0,F!0];
+c:=0;
+for i := 1 to ns do 
+    for k := 1 to 3 do
+        b1[9+k]:=F!S[i,k];
+    end for;
+    v:=gmimc(b1,1,48);
+    for k:= 1 to 12 do
+        DS[i,k]:=v[k];
+    end for;
+end for;
+
+t4:=t4+Realtime(T4);
+t1;
+t2;
+t3;
+t4;
+Realtime(T);
+ns;

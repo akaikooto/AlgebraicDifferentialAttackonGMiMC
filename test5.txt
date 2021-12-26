@@ -1,0 +1,43 @@
+//方法2，k=4
+load "division.txt";
+load "GMiMC.txt";
+p:=1031;
+F:=GF(p);
+alpha:=1;
+v:=4;
+SS:=ZeroMatrix(F,2*p,v);
+P<x,y,z,w>:=PolynomialRing(F,v);
+f:=[y,y,y];
+ns:=0;
+k1:=527;
+    b:=[F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!alpha,F!k1,y,z,w];
+    b:=gmimc(b,1,12-v-1);
+    con:=b[1];
+    b:=gmimc(b,12-v,12);
+    f[1]:=b[1]-con;
+    for j:=1 to 12 do
+        b[j]:=division(b[j],f[1]);
+    end for;
+
+    b:=gmimc(b,13,24-v-1);
+    con:=b[1];
+    b:=gmimc(b,24-v,24);
+    f[2]:=b[1]-con;
+    for j:=1 to 12 do
+        b[j]:=division(b[j],f[2]);
+    end for;
+
+    b:=gmimc(b,25,36-v-1);
+    con:=b[1];
+    b:=gmimc(b,36-v,36);
+    f[3]:=b[1]-con;
+    for j:=1 to 12 do
+        b[j]:=division(b[j],f[3]);
+    end for;
+
+Degree(f[1]);
+Length(f[1]);
+Degree(f[2]);
+Length(f[2]);
+Degree(f[3]);
+Length(f[3]);
